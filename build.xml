@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="CernLib" basedir="." default="compile">
+	<property name="JAVA_VERSION" value="1.6"/>
+	
+	<property name="build" value="build"/> 
+	<tstamp>
+		<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+	</tstamp>
+
+    <target name="clean">
+	<delete dir="${build}"/>
+    </target>
+
+    <target name="compile">
+	<mkdir dir="${build}"/>
+	<javac srcdir="src" destdir="${build}" debug="true" source="${JAVA_VERSION}" target="${JAVA_VERSION}" listfiles="true"
+		includeantruntime="false"
+		classpath="../CommonLib/commonlib.jar"
+        />
+    </target>
+</project>
