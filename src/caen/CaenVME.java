@@ -9,7 +9,9 @@ import common.Errno;
 import common.connection.link.TCP;
 import common.io.ByteInputStream;
 import common.io.ByteOutputStream;
-
+/*
+ * Low Voltage interface over TCP/IP
+ */
 public class CaenVME extends TCP {
 	final protected static int
 		CMD_SWREL=0,     CMD_BRDREL=1, CMD_DISPREAD=2,
@@ -46,7 +48,6 @@ public class CaenVME extends TCP {
 	private static final char[] emptyhdr=new char[4];
 	//send/recv for asynchronous communication (fast)
 	public int commandSend(VmeCommand c,StringBuilder b) {
-		if (super.io==null) return -Errno.EABORT;
 		b.insert(0, emptyhdr);
 		b.setCharAt(0,(char)c.pci);
 		b.setCharAt(1,(char)c.crate);

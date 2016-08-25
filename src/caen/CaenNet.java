@@ -3,19 +3,25 @@ package caen;
 import common.Errno;
 import common.connection.link.TCP;
 
+/*
+ * High Voltage interface over TCP/IP
+ */
 public class CaenNet extends TCP {
-	public int command(int addr,int fn,StringBuilder b){
-		int trycnt=0;
-		b.insert(0,new char[]{(char)addr,(char)((fn>>8)&0xff),(char)(fn&0xff)});
-		//b.insert(0,(char)addr);
-		//b.insert(1,(char)((fn>>8)&0xff));
-		//b.insert(2,(char)(fn&0xff));
+
+	private static final char[] emptyhdr=new char[3];
+	//send/recv for asynchronous communication (fast)
+	public int commandSend(int addr,int fn,StringBuilder b) {
+		b.insert(0, emptyhdr);
+		b.setCharAt(0,(char)addr);
+		b.setCharAt(1,(char)((fn>>8)&0xff));
+		b.setCharAt(2,(char)(fn&0xff));
 		//log.debug("send[%d]: %s",b.length(),StrUtil.hex(b.toString()));
 		int r=super.send(b);
 		b.delete(0,3);
-		if (r<0) {
-			return r;
-		}
+		return r;
+	}
+	public int commandRecv(int addr,int fn, StringBuilder b) {
+		int r,trycnt=0;
 		do{
 			r=super.recv(b);
 			++trycnt;
@@ -23,6 +29,13 @@ public class CaenNet extends TCP {
 		if (r<0) log.error("recv=%d",r);
 		else if (trycnt>2) log.error("resp in %d tries",trycnt);
 		return r;
+	}
+
+	public int command(int addr,int fn,StringBuilder b){
+		if (super.io==null) return -Errno.EABORT;
+		int r=commandSend(addr, fn, b);
+		if (r<0) return r;
+		return commandRecv(addr, fn, b);
 	}
 	public int readIdent(int cr,StringBuilder b) {
 		b.setLength(0);
