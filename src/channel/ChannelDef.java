@@ -9,7 +9,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import common.StrUtil;
+import sys.StrUtil;
 
 public class ChannelDef {
 	public int id;		//database unique ID
@@ -20,7 +20,7 @@ public class ChannelDef {
 	public String pv; 	//process variable in external system (EPICS)
 	public float[] lLimits;//lower limits
 	public float[] uLimits;//upper limits
-	
+
 	public ChannelDef(int id){this.id=id;}
 	public ChannelDef(int id,String nm){this.id=id;pv=name=nm;}
 	public ChannelDef(String nm,String descr){id=0;pv=name=nm;this.descr=descr;}
@@ -39,11 +39,13 @@ public class ChannelDef {
 		else lLimits=d.lLimits.clone(); //Arrays.copyOf(d.lLimits, d.lLimits.length);
 		*/
 	}
+	@Override
 	public boolean equals(Object o){
 		if (o instanceof ChannelDef)
 			return id == (((ChannelDef)o).id);
 		return false;
 	}
+	@Override
 	public int hashCode() {
 		return id;
 	}
@@ -73,6 +75,7 @@ public class ChannelDef {
 		ds.writeUTF(unit);
 		ds.writeUTF(descr);
 	}
+	@Override
 	public String toString() { return name; }
 	public void writeAlarms(DataOutputStream out) throws IOException {
 		writeFloats(out, lLimits);
@@ -97,6 +100,6 @@ public class ChannelDef {
 		else {
 			out.writeShort(a.length);
 			for (float f:a) out.writeFloat(f);
-		}		
+		}
 	}
 }

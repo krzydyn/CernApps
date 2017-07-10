@@ -56,12 +56,12 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import common.Logger;
-import common.StrUtil;
-import common.algebra.Const;
-import common.ui.CheckBoxIcon;
-import common.ui.DialogPanel;
-import common.ui.UiUtils;
+import sys.Const;
+import sys.Logger;
+import sys.StrUtil;
+import sys.ui.CheckBoxIcon;
+import sys.ui.DialogPanel;
+import sys.ui.UiUtils;
 
 @SuppressWarnings("serial")
 public class PlotXY extends JPanel implements ActionListener {
@@ -187,6 +187,7 @@ public class PlotXY extends JPanel implements ActionListener {
 		chns.add(new PlotChannel(0));
 		recalcPlotArea=true;
 		addMouseListener(new MouseListener(){
+			@Override
 			public void mouseClicked(MouseEvent ev){
 				if (checkPopup(ev)) return ;
 				if (ev.getButton()==MouseEvent.BUTTON1){
@@ -194,8 +195,11 @@ public class PlotXY extends JPanel implements ActionListener {
 					else if (ev.getClickCount()==2) propsDialog();
 				}
 			}
+			@Override
 			public void mouseEntered(MouseEvent ev) { }
+			@Override
 			public void mouseExited(MouseEvent ev) { }
+			@Override
 			public void mousePressed(MouseEvent ev) {
 				if (getParent().isFocusable()){
 					getParent().requestFocus();
@@ -209,6 +213,7 @@ public class PlotXY extends JPanel implements ActionListener {
 					}
 				}
 			}
+			@Override
 			public void mouseReleased(MouseEvent ev) {
 				if (checkPopup(ev)) return ;
 				if (ev.getButton()==MouseEvent.BUTTON1){
@@ -225,6 +230,7 @@ public class PlotXY extends JPanel implements ActionListener {
 			}
 		});
 		addMouseMotionListener(new MouseMotionListener(){
+			@Override
 			public void mouseDragged(MouseEvent ev) {
 				if (ev.getModifiersEx()==MouseEvent.BUTTON1_DOWN_MASK){
 					if (selMode!=0){
@@ -237,12 +243,17 @@ public class PlotXY extends JPanel implements ActionListener {
 					}
 				}
 			}
+			@Override
 			public void mouseMoved(MouseEvent e) {}
 		});
 		addComponentListener(new ComponentListener(){
+			@Override
 			public void componentHidden(ComponentEvent e) {}
+			@Override
 			public void componentMoved(ComponentEvent e) { }
+			@Override
 			public void componentResized(ComponentEvent e){PlotXY.this.componentResized();}
+			@Override
 			public void componentShown(ComponentEvent e) {}
 		});
 		setMinimumSize(prefsz);
@@ -280,7 +291,7 @@ public class PlotXY extends JPanel implements ActionListener {
 		plotMode=m;
 		if (m!=0){
 			if (selMode!=0) selMode=m;
-			if (caretType!=0) caretType=m;			
+			if (caretType!=0) caretType=m;
 		}
 		if (plotMode==PLOT_X){
 			autofit.setEnabled(true);
@@ -296,7 +307,7 @@ public class PlotXY extends JPanel implements ActionListener {
 			autofit.setEnabled(false);
 			autofit.setText("Autofit");
 		}
-			
+
 	}
 	public int getPlotMode() {return plotMode;}
 	public void setSelMode(int m) {selMode=m;}
@@ -308,6 +319,7 @@ public class PlotXY extends JPanel implements ActionListener {
 	protected void popupMenu(MouseEvent ev){
 		popup.show(ev.getComponent(),ev.getX(),ev.getY());
 	}
+	@Override
 	public void actionPerformed(ActionEvent ev){
 		final String cmd=ev.getActionCommand();
 		if ("props".equals(cmd)) propsDialog();
@@ -321,6 +333,7 @@ public class PlotXY extends JPanel implements ActionListener {
 		chkbx.setLocation(0,getHeight()-chkbx.getHeight());
 		repaint(500);
 	}
+	@Override
 	public Insets getInsets(){
 		if (ins==null) ins=super.getInsets();
 		return ins;
@@ -341,7 +354,7 @@ public class PlotXY extends JPanel implements ActionListener {
 			for (int i=0; i<chns.size(); ++i) {
 				chns.get(i).clear();
 			}
-		}		
+		}
 		if (autoBounds.x==AUTOBOUNDS_SCALE) view.width=0;
 		if (autoBounds.y==AUTOBOUNDS_SCALE) view.height=0;
 	}
@@ -560,12 +573,12 @@ public class PlotXY extends JPanel implements ActionListener {
 			JMenuItem mi=(JMenuItem)cmps[i];
 			KeyStroke ks=mi.getAccelerator();
 			if (ks==null) continue;
-			if (ks.getKeyCode()==ev.getKeyCode() && ks.getModifiers()==mod)		
+			if (ks.getKeyCode()==ev.getKeyCode() && ks.getModifiers()==mod)
 				return mi;
 		}
 		return null;
 	}
-	
+
 	protected void setCaret(MouseEvent ev) {
 		Rectangle r=new Rectangle(plotArea);
 		r.grow(5,2);
@@ -693,7 +706,7 @@ public class PlotXY extends JPanel implements ActionListener {
 				if (cnt==0){av=0; mn=mx=yy;}
 				av+=yy; ++cnt;
 				if (mn>yy) mn=yy; else if (mx<yy) mx=yy;
-			}			
+			}
 		}
 		if (cnt==0) return ;
 		av/=cnt;
@@ -818,6 +831,7 @@ public class PlotXY extends JPanel implements ActionListener {
 		g2.setStroke(par.line);
 		g2.draw(path);
 	}
+	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		calcPlotArea();
@@ -887,7 +901,7 @@ public class PlotXY extends JPanel implements ActionListener {
 				//g2.fill(rect);
 				line.setLine(plotArea.x, pe.getY(), plotArea.getMaxX(), pe.getY());
 				g2.draw(line);
-			}			
+			}
 		}
 		}
 		for (int chn=0; chn<chns.size(); chn++)
@@ -1068,7 +1082,7 @@ public class PlotXY extends JPanel implements ActionListener {
 		public void paintDone(PlotXY plot);
 	}
 
-	static class PropertiesPanel extends DialogPanel{
+	static class PropertiesPanel extends DialogPanel {
 		protected JTextField xmin,xmax;
 		protected JTextField ymin,ymax;
 		protected PropertiesPanel(){

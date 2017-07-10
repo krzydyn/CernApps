@@ -3,15 +3,16 @@ package conn;
 import java.util.ArrayList;
 import java.util.List;
 
-import common.Errno;
-import common.connection.link.AbstractLink;
+import sys.Errno;
+
+import com.link.AbstractLink;
 
 public abstract class AsyncConn extends AbstrConn {
-	private List<Object> repeat=new ArrayList<Object>();
+	private final List<Object> repeat=new ArrayList<Object>();
 	public AsyncConn() {}
 	public AsyncConn(AbstractLink l) {super(l);}
 
-	protected void repeat(Object o) {this.repeat.add(o);} 
+	protected void repeat(Object o) {this.repeat.add(o);}
 	abstract protected int prepare(Object m,StringBuilder bi);
 	abstract protected void dispatch(StringBuilder bi);
 
@@ -23,7 +24,7 @@ public abstract class AsyncConn extends AbstrConn {
 		for (;!thread.isInterrupted();) {
 			if ((r=link.recv(b))<0) {
 				if (r==-Errno.EAGAIN) {
-					Object m=(Object)msgq.get(100);
+					Object m=msgq.get(100);
 					if (m==null) {link.idle();continue;}
 					long tm=System.currentTimeMillis()+2000;
 					for (r=0; ; ++r) {

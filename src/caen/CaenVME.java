@@ -5,10 +5,12 @@ import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import common.Errno;
-import common.connection.link.TCP;
-import common.io.ByteInputStream;
-import common.io.ByteOutputStream;
+import sys.Errno;
+
+import com.io.ByteInputStream;
+import com.io.ByteOutputStream;
+import com.link.TCP;
+
 /*
  * Low Voltage interface over TCP/IP
  */
@@ -77,7 +79,7 @@ public class CaenVME extends TCP {
 		VmeCommand cmd=new VmeCommand(pci, cr, fn);
 		int r=commandSend(cmd, b);
 		if (r<0) return r;
-		return commandRecv(cmd, b);		
+		return commandRecv(cmd, b);
 	}
 
 	public int readSWVersion(StringBuilder b) {

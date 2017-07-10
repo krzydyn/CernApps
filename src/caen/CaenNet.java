@@ -1,7 +1,8 @@
 package caen;
 
-import common.Errno;
-import common.connection.link.TCP;
+import sys.Errno;
+
+import com.link.TCP;
 
 /*
  * High Voltage interface over TCP/IP
@@ -22,10 +23,12 @@ public class CaenNet extends TCP {
 	}
 	public int commandRecv(int addr,int fn, StringBuilder b) {
 		int r,trycnt=0;
+		setState(STATE_RECV, true);
 		do{
 			r=super.recv(b);
 			++trycnt;
 		}while (r==-Errno.EAGAIN);
+		setState(STATE_RECV, false);
 		if (r<0) log.error("recv=%d",r);
 		else if (trycnt>2) log.error("resp in %d tries",trycnt);
 		return r;

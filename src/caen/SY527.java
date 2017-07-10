@@ -3,9 +3,10 @@ package caen;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-import common.StrUtil;
-import common.io.ByteInputStream;
-import common.io.ByteOutputStream;
+import sys.StrUtil;
+
+import com.io.ByteInputStream;
+import com.io.ByteOutputStream;
 
 /**
  * CEAN SY527 Universal MultiChannel Power Supply System

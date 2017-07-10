@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
-import common.StrUtil;
+import sys.StrUtil;
 
 public class HVModule extends CaenModule {
 	static private String[] fieldNames=new String[]{"ModNm",
@@ -41,6 +41,7 @@ public class HVModule extends CaenModule {
 				String.format("%d",idec),
 		};
 	}
+	@Override
 	public String toString(){return String.format("%d: %s iunit=%d "+
 			"sn=%d ver=%x chns=%d homog=%X vmax=%d imax=%d rmin=%d rmax=%d "+
 			"vres=%d ires=%d vdec=%d idec=%d %s hom",
@@ -176,7 +177,7 @@ public class HVModule extends CaenModule {
 			//- if Mask bit =0 the corresponding parameter maintains the old value;
 			//- if Mask bit =1 The corresponding parameter will take the value
 			//indicated in the corresponding Flag bit.
-			
+
 			//Mask and Flag Word (p21,p115)
 			StringBuilder fl=new StringBuilder();
 			fl.append(String.format("%X|",flag));
@@ -225,6 +226,7 @@ public class HVModule extends CaenModule {
 				v.add(vs[i]);
 		}
 
+		@Override
 		public String toString(){
 			return String.format("n='%s' v0=%d v1=%d i0=%d i1=%d vmax=%d",
 					name,v0set,v1set,i0set,i1set,vmax);

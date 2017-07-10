@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import common.Logger;
+import sys.Logger;
+
 /**
  * CaenCrate is CaenNet controller with internal modules
  * like HVModule

@@ -15,7 +15,6 @@
 	<mkdir dir="${build}"/>
 	<javac srcdir="src" destdir="${build}" debug="true" source="${JAVA_VERSION}" target="${JAVA_VERSION}" listfiles="true"
 		includeantruntime="false"
-		classpath="../CommonLib/commonlib.jar"
         />
     </target>
 </project>

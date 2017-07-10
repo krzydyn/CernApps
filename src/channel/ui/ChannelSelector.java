@@ -15,8 +15,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 
+import sys.ui.DialogPanel;
 import channel.ChannelDef;
-import common.ui.DialogPanel;
 
 @SuppressWarnings("serial")
 public class ChannelSelector extends DialogPanel {
@@ -54,6 +54,7 @@ public class ChannelSelector extends DialogPanel {
 		chList=l;
 		addButtons();
 		l.addMouseListener(new MouseAdapter(){
+			@Override
 			public void mouseClicked(MouseEvent ev){
 				if (ev.getButton()==MouseEvent.BUTTON1 &&
 						ev.getClickCount()==2)

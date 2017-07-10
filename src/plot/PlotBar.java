@@ -23,8 +23,8 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import common.Logger;
-import common.algebra.Const;
+import sys.Const;
+import sys.Logger;
 
 @SuppressWarnings("serial")
 public class PlotBar extends JPanel {
@@ -36,7 +36,7 @@ public class PlotBar extends JPanel {
 	static final Stroke dashLine=new BasicStroke(1,0,0,3,new float[]{3f,3f},0);
 
 	protected String yUnit="";
-	private int automodeY=PlotXY.AUTOBOUNDS_SCALE;
+	protected int automodeY=PlotXY.AUTOBOUNDS_SCALE;
 	private final Rectangle plotArea=new Rectangle();
 	private boolean recalcPlotArea;
 	private double yValue;
@@ -48,9 +48,13 @@ public class PlotBar extends JPanel {
 		recalcPlotArea=true;
 
 		addComponentListener(new ComponentListener(){
+			@Override
 			public void componentHidden(ComponentEvent e) {log.debug("PlotXY hidden");}
+			@Override
 			public void componentMoved(ComponentEvent e) { }
+			@Override
 			public void componentResized(ComponentEvent e){PlotBar.this.componentResized();}
+			@Override
 			public void componentShown(ComponentEvent e) {}
 		});
 		setMinimumSize(prefsz);
@@ -108,6 +112,7 @@ public class PlotBar extends JPanel {
 		plotArea.x=ins.right+SP+lw;
 		plotArea.y=ins.top+mtr.getHeight()/2;
 	}
+	@Override
 	public void paintComponent(Graphics g){
 		//FontMetrics mtr;
 		Graphics2D g2=(Graphics2D)g;
@@ -115,7 +120,7 @@ public class PlotBar extends JPanel {
 		calcPlotArea();
 
 		FontMetrics mtr=getFontMetrics(gridfont);
-		
+
 		int yunitH=0;
 		if (yUnit!=null && !yUnit.isEmpty()) yunitH=mtr.getHeight();
 
@@ -153,7 +158,7 @@ public class PlotBar extends JPanel {
 		g2.setFont(unitfont);mtr=g2.getFontMetrics(unitfont);
 		if (yUnit!=null){
 			g2.drawString(yUnit,plotArea.x-mtr.stringWidth(yUnit)-SP/2,
-					plotArea.y+mtr.getAscent()-SP/2);			
+					plotArea.y+mtr.getAscent()-SP/2);
 		}
 	}
 	public double gridY(double v) { return PlotXY.grid(v); }

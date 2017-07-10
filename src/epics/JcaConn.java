@@ -5,10 +5,11 @@ import java.io.DataOutputStream;
 import java.util.HashMap;
 import java.util.Set;
 
+import com.io.ByteInputStream;
+import com.io.ByteOutputStream;
+
+import sys.StrUtil;
 import channel.ChannelData;
-import common.StrUtil;
-import common.io.ByteInputStream;
-import common.io.ByteOutputStream;
 import conn.AsyncConn;
 
 public class JcaConn extends AsyncConn {
@@ -22,7 +23,7 @@ public class JcaConn extends AsyncConn {
 	final static int DBR_LONG=5;//4byte
 	final static int DBR_DOUBLE=6;//4byte
 	final static int DBR_STS_STRING=7;
-	
+
 	protected static class JCAChannel{
 		final static int STATE_CLEAN=0;
 		final static int STATE_WAIT=1;
@@ -53,35 +54,36 @@ public class JcaConn extends AsyncConn {
 		Object data;
 	}
 	private int cid_counter=0;
-	private HashMap<String,JCAChannel> pvmap=new HashMap<String,JCAChannel>();
-	private HashMap<Integer,JCAChannel> cidmap=new HashMap<Integer,JCAChannel>();
+	private final HashMap<String,JCAChannel> pvmap=new HashMap<String,JCAChannel>();
+	private final HashMap<Integer,JCAChannel> cidmap=new HashMap<Integer,JCAChannel>();
 
 	public JcaConn() {
 		super(new JcaLink());
 	}
+	@Override
 	public int defaultPort(){return DEFAULT_PORT;}
-	
-	public Set<String> getChannels() { return pvmap.keySet(); } 
-	
+
+	public Set<String> getChannels() { return pvmap.keySet(); }
+
 	public void sendInit(String user){
 		if (isStopped()) return ;
 		Msg m=new Msg(Msg.CA_INIT,null);
 		m.data=user;
-		msgq.add(m);				
+		msgq.add(m);
 	}
 	public void createPv(String pv){
 		if (isStopped()) return ;
 		if (!pvmap.containsKey(pv))
-			msgq.add(new Msg(Msg.PV_CREATE,pv));		
+			msgq.add(new Msg(Msg.PV_CREATE,pv));
 	}
 	public void clearPv(String pv){
 		if (isStopped()) return ;
 		if (!pvmap.containsKey(pv)) return ;
-		msgq.add(new Msg(Msg.PV_CLEAR,pv));		
+		msgq.add(new Msg(Msg.PV_CLEAR,pv));
 	}
 	public void readPv(String pv){
 		if (isStopped()) return ;
-		msgq.add(new Msg(Msg.PV_READ,pv));		
+		msgq.add(new Msg(Msg.PV_READ,pv));
 	}
 	public void writePv(String pv,float value){
 		if (isStopped()) return ;
@@ -91,7 +93,7 @@ public class JcaConn extends AsyncConn {
 		m.data=v;
 		msgq.add(m);
 	}
-	
+
 	public void readChn(ChannelData c) {
 		if (c.def.name==null) throw new NullPointerException("channel def.name");
 		log.debug("readChn(%s)",c.def.name);
@@ -104,7 +106,8 @@ public class JcaConn extends AsyncConn {
 		if (c.def.pv != null) writePv(c.def.name, c.getValue());
 		else writePv(c.def.name, c.getValue());
 	}
-	
+
+	@Override
 	protected void disconnected() {
 		pvmap.clear();
 		cidmap.clear();
@@ -129,15 +132,15 @@ public class JcaConn extends AsyncConn {
 
 		link.setCmd(JcaLink.CA_PROTO_VERSION);
 		buf.setLength(0);
-		
+
 		if (u!=null) {
 			link.send(buf);
-			
+
 			String[] uh=u.split("@", 2);
 			link.setCmd(JcaLink.CA_PROTO_CLIENT_NAME);
 			buf.setLength(0);buf.append(uh[0]);
 			link.send(buf);
-			
+
 			link.setCmd(JcaLink.CA_PROTO_HOST_NAME);
 			buf.setLength(0);buf.append(uh[1]);
 			//link.send(buf);
@@ -215,8 +218,9 @@ public class JcaConn extends AsyncConn {
 		return 1;
 	}
 
+	@Override
 	protected int prepare(Object m,StringBuilder buf) {
-		Msg msg=(Msg)m;		
+		Msg msg=(Msg)m;
 		JCAChannel ci=getChannel(msg.pv);
 		int r=-1;
 		if (msg.cmd==Msg.CA_INIT) {
@@ -247,7 +251,7 @@ public class JcaConn extends AsyncConn {
 			if ((r=writePv(ci,buf))==0) repeat(m);
 			if (r<0) {
 				if (listener!=null) listener.writeDone(r, ci.pv);
-			}			
+			}
 			buildData(ci,JcaLink.CA_PROTO_WRITE_NOTIFY,(float[])msg.data,buf);
 			log.debug("write pv: %s=%s",ci.pv,StrUtil.vis(buf));
 		}
@@ -313,6 +317,7 @@ public class JcaConn extends AsyncConn {
 		}catch (Throwable e){}
 	}
 
+	@Override
 	protected void dispatch(StringBuilder buf) {
 		JcaLink link=(JcaLink)this.link;
 		JCAChannel ci=cidmap.get(link.getCid());

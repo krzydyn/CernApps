@@ -24,8 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import common.algebra.Const;
-import common.ui.UiUtils;
+import sys.Const;
+import sys.ui.UiUtils;
 
 @SuppressWarnings("serial")
 public class PlotTime extends PlotXY {
@@ -36,7 +36,7 @@ public class PlotTime extends PlotXY {
 	final static SimpleDateFormat dfFull=new SimpleDateFormat("yyyy-MM-dd H:mm");
 	final static long zoneoffs=TimeZone.getDefault().getOffset(System.currentTimeMillis())/1000;
 
-	//private long year; 
+	//private long year;
 	private long tm0;
 	private boolean needSort=false;
 	public PlotTime() {
@@ -58,6 +58,7 @@ public class PlotTime extends PlotXY {
 	synchronized public void addPoint(long tm,double v) {
 		addPoint(0, tm, v);
 	}
+	@Override
 	public void addPoints(int chn,List<Point2D> plist) {
 		if (plist.size() == 0) return;
 		List<Point2D> pnts=getPoints(chn);
@@ -72,9 +73,10 @@ public class PlotTime extends PlotXY {
 		List<Point2D> pnts=getPoints(chn);
 		if (pnts!=null && pnts.size()>0) {
 			if (x<pnts.get(pnts.size()-1).getX()) needSort=true;
-		}			
+		}
 		super.addPoint(chn,x,v);
 	}
+	@Override
 	public void paintComponent(Graphics g){
 		sortPoints();
 		super.paintComponent(g);
@@ -86,7 +88,7 @@ public class PlotTime extends PlotXY {
 			for (int i=0; (pnts=getPoints(i))!=null; ++i) {
 				synchronized (pnts){
 					Collections.sort(pnts,new Point2DComparator());
-				}				
+				}
 			}
 			needSort=false;
 		}
@@ -94,6 +96,7 @@ public class PlotTime extends PlotXY {
 	public long getCaretTime() {
 		return double2time(getCaret().getX());
 	}
+	@Override
 	public double gridX(double x) {
 		double c=0.5;
 		//NOTE set a year has 365.25 days because of leap year every 4 years
@@ -107,6 +110,7 @@ public class PlotTime extends PlotXY {
 		if (x<g[g.length-1]*c) return g[g.length-1];
 		return grid(x);
 	}
+	@Override
 	public String formatX(double v,double grid) {
 		long tm=double2time(v);
 		Date d=new Date(tm*1000);
@@ -120,6 +124,7 @@ public class PlotTime extends PlotXY {
 		if (grid<60*24) return dfDay.format(d);
 		return dfMonth.format(d);
 	}
+	@Override
 	public double parseX(String txt) throws ParseException {
 		String[] dt;
 		Date d=new Date(double2time(view.getMinX())*1000);
@@ -136,6 +141,7 @@ public class PlotTime extends PlotXY {
 		d=dfFull.parse(txt);
 		return time2double(d.getTime()/1000);
 	}
+	@Override
 	protected PropertiesPanel createPropertiesPanel(){
 		return new PropertiesPanel(xUnit,yUnit);
 	}
@@ -148,10 +154,12 @@ public class PlotTime extends PlotXY {
 			super(xunit, yunit);
 			check();
 		}
+		@Override
 		public void addNotify(){
 			super.addNotify();
 			xrng.requestFocusInWindow();
 		}
+		@Override
 		protected void buildXPropsUI(JPanel p,GridBagConstraints constr){
 			ButtonGroup group;
 			JRadioButton rb;
@@ -185,12 +193,13 @@ public class PlotTime extends PlotXY {
 			if (xrng==null) return Double.NaN;
 			return Double.parseDouble(xrng.getText());
 		}
+		@Override
 		public void setProperties(PlotXY obj){
 			super.setProperties(obj);
 			Rectangle2D r=obj.getSelection();
 			if (r.getWidth()<Const.eps || r.getHeight()<Const.eps)
 				r=obj.getView();
-			
+
 			if (xrng!=null){
 				xrng.setText(PlotXY.format(r.getWidth()));
 				//if (obj.autoBounds.x==AUTOBOUNDS_MOVE)
@@ -199,6 +208,7 @@ public class PlotTime extends PlotXY {
 				//	xfrtob.setEnabled(true);
 			}
 		}
+		@Override
 		public void getProperties(PlotXY obj) {
 			Rectangle2D.Double r=new Rectangle2D.Double();
 			if (xrngb.isSelected()) {
@@ -223,6 +233,7 @@ public class PlotTime extends PlotXY {
 				UiUtils.setGroupEnabled(xfrtoProp,true);
 			}
 		}
+		@Override
 		public void actionPerformed(ActionEvent ev) {
 			final String cmd=ev.getActionCommand();
 			if ("xrng".equals(cmd) || "xfrto".equals(cmd))
@@ -232,6 +243,7 @@ public class PlotTime extends PlotXY {
 	}
 
 	static class Point2DComparator implements Comparator<Point2D>{
+		@Override
 		public int compare(Point2D o1, Point2D o2) {
 			return (int)Math.signum(o1.getX()-o2.getX());
 		}

@@ -2,8 +2,9 @@ package caen;
 
 import java.io.DataOutputStream;
 
-import common.StrUtil;
-import common.io.ByteOutputStream;
+import sys.StrUtil;
+
+import com.io.ByteOutputStream;
 
 /**
  * N470 - 4 Channel Programmable HV Power Supply
@@ -12,7 +13,7 @@ import common.io.ByteOutputStream;
  * send(cr=2,code=0x102)[0]: //CMD_GetChnSETTINGS(chn=1)
  * recv[22]:0121 13 0000 00C4 0A41  0000  0000  000F  27   F401 F401 870C
  *           SW  St Vmon Imon V0set I0set V1set I1set Trip Rup  Rdn  Vmax
- *           
+ *
  * V0set 0-8000 V
  * I0set 0-3000 uA
  * Trip 0-9999 (s/100)
