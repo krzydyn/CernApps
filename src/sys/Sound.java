@@ -25,6 +25,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.Line;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
@@ -150,9 +151,12 @@ public class Sound {
 	}
 
 	static public Clip play(URL url) throws Exception {
-		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
-		Clip clip = AudioSystem.getClip();
-		clip.open(audioInputStream);
+		AudioInputStream stream = AudioSystem.getAudioInputStream(url);
+		/*Clip clip = AudioSystem.getClip();
+		clip.open(stream);
+		clip.start();*/
+		Clip clip = (Clip)AudioSystem.getLine(new Line.Info(Clip.class));
+		clip.open(stream);
 		clip.start();
 		return clip;
 	}
