@@ -17,7 +17,6 @@ import java.awt.Window;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
@@ -75,16 +74,28 @@ public class UiUtils {
         } catch (Throwable t) {}
     }
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void quitAction(final Window w,final WindowListener l) {
 		if (!SysUtil.isMac()) return ;
 
-		Class<?> cl;
 		try {
-			cl = Class.forName("com.apple.eawt.Application");
-			Method m = cl.getMethod("getApplication");
-			Object app=m.invoke(null);
-			m=cl.getMethod("setQuitHandler", com.apple.eawt.QuitHandler.class);
-			m.invoke(app, new com.apple.eawt.QuitHandler() {
+			//close all windows before quit
+			Class<?> app = Class.forName("com.apple.eawt.Application");
+			Method getApp = app.getMethod("getApplication");
+			Object inst = getApp.invoke(app);
+			Class<Enum> strategy = (Class<Enum>)Class.forName("com.apple.eawt.QuitStrategy");
+			Enum closeAllWindows = Enum.valueOf(strategy, "CLOSE_ALL_WINDOWS");
+			Method method = app.getMethod("setQuitStrategy", strategy);
+			method.invoke(inst, closeAllWindows);
+		} catch (Throwable e) {
+		}
+		/*
+		 try {
+			Class<?> app = Class.forName("com.apple.eawt.Application");
+			Method getApp = app.getMethod("getApplication");
+			Object inst=getApp.invoke(null);
+			getApp=app.getMethod("setQuitHandler", Class.forName("com.apple.eawt.QuitHandler"));
+			getApp.invoke(inst, new com.apple.eawt.QuitHandler() {
 				@Override
 				public void handleQuitRequestWith(com.apple.eawt.AppEvent.QuitEvent ev, com.apple.eawt.QuitResponse qr) {
 					WindowEvent we=new WindowEvent(w,0);
@@ -93,6 +104,7 @@ public class UiUtils {
 				}
 			});
 		} catch (Exception e) {}
+		*/
 	}
 
 	public final static void setDirty(JFrame f) {
