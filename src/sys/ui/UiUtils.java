@@ -89,29 +89,10 @@ public class UiUtils {
 			method.invoke(inst, closeAllWindows);
 		} catch (Throwable e) {
 		}
-		/*
-		 try {
-			Class<?> app = Class.forName("com.apple.eawt.Application");
-			Method getApp = app.getMethod("getApplication");
-			Object inst=getApp.invoke(null);
-			getApp=app.getMethod("setQuitHandler", Class.forName("com.apple.eawt.QuitHandler"));
-			getApp.invoke(inst, new com.apple.eawt.QuitHandler() {
-				@Override
-				public void handleQuitRequestWith(com.apple.eawt.AppEvent.QuitEvent ev, com.apple.eawt.QuitResponse qr) {
-					WindowEvent we=new WindowEvent(w,0);
-					l.windowClosing(we);
-					qr.performQuit();
-				}
-			});
-		} catch (Exception e) {}
-		*/
 	}
 
-	public final static void setDirty(JFrame f) {
-		f.getRootPane(  ).putClientProperty("windowModified", Boolean.TRUE);
-	}
-	public final static void setClean(JFrame f) {
-		f.getRootPane(  ).putClientProperty("windowModified", Boolean.FALSE);
+	public final static void setModified(JFrame f, boolean m) {
+		f.getRootPane(  ).putClientProperty("windowModified", m);
 	}
 	public final static void setIcon(JFrame f,ImageIcon icon){
 		if (icon==null) return ;

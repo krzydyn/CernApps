@@ -35,6 +35,7 @@ abstract public class AbstractLink implements DataLink {
 		return 0;
 	}
 	public boolean isConnected() {
+		if (io==null) return false;
 		return io.isOpened();
 	}
 
